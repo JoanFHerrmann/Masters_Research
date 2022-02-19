@@ -1,7 +1,14 @@
 # Created by Joanie Herrmann
 # This code compares two raster grids with a range of statistical measures: bias, standard deviation and root mean square error (RMSE). 
-# Its original intention is to compare a bathymetric grid generated from satellite data to a grid from aerial LiDAR.  
-# This code utilizes ArcPy, ArcGIS Pro's proprietary coding language, therefore requires a license and project. 
+
+# Its original intention is to compare a bathymetric grid generated from satellite data to a grid from aerial LiDAR. Satellite derived bathymetry relies on two inputs: altimetry and imagery data. 
+# Altimetry data is collected through ICESat-2, NASA's climate change satellite (https://openaltimetry.org/), NASA being the funding source for this project through Oregon State University. Imagery 
+# data is collected by Landsat and Sentinel (https://earthexplorer.usgs.gov/), their difference being Sentinel has a more precise resolution. From the imagery data, the relative reflectance in the 
+# blue and green bands may be computed (ratio of logs, Stumph ratio) to generate relative bathymetry and relative bathymetry is tied into the "real world" with the altimetry data. Because this is an  
+# emerging method for developing bathymetric grids, their accuracy must be validated against more precise measures, such as through comparison to bathymetric grids developed from aerial LiDAR. This 
+# code provides summary statistics on how well the experimental (satellite derived) bathymetric grid compares to a truth (aerial LiDAR) bathymetric grid. 
+
+# This code utilizes ArcPy, ArcGIS Pro's proprietary coding language, therefore in the comments are explanations, as well as justifications, for decisions. 
 # Last updated 2/4/2022
 
 from arcpy import env
@@ -21,13 +28,13 @@ def calculate_RMSE(raster_1, raster_2, AOI, tag): # (raster to compare other ras
     domain_1 = "Domain1" + "_" + str(tag) # name of raster extent shapefile using the tag 
     if arcpy.Exists(domain_1) == 1: # checks to see if name already exists
         arcpy.Delete_management(domain_1) # deletes shapefile if it already exists
-    arcpy.ddd.RasterDomain(raster_1, domain_1, "POLYGON") # creates polygon shapefile covering the extent of the first raster 
+    arcpy.ddd.RasterDomain(raster_1, domain_1, "POLYGON") # "POLYGON": creates polygon shapefile covering the extent of the first raster 
 
     # Capture extent for raster_2
     domain_2 = "Domain2" + "_" + str(tag) # name of raster extent shapefile using the tag 
     if arcpy.Exists(domain_2) == 1: # checks to see if name already exists
         arcpy.Delete_management(domain_2) # deletes shapefile if it already exists
-    arcpy.ddd.RasterDomain(raster_2, domain_2, "POLYGON") # creates polygon shapefile covering the extent of the first raster 
+    arcpy.ddd.RasterDomain(raster_2, domain_2, "POLYGON") # "POLYGON": creates polygon shapefile covering the extent of the first raster 
 
     # Intersect between two extents 
     intersect = "intersect" + "_" + str(tag) # name of overlapping extents shapefile using the tag 
